@@ -41,7 +41,7 @@ def setup():
         control.connect_drone('/dev/ttyACM0')
     else:
         print("MODE = test")
-        control.connect_drone('127.0.0.1:14551')
+        control.connect_drone("udp:127.0.0.1:14550")
     
     control.set_flight_altitude(MAX_ALT) #new never tested!
 

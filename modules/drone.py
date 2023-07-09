@@ -6,7 +6,7 @@ vehicle = None
 def connect_drone(connection_string, waitready=True, baudrate=57600):
     global vehicle
     if vehicle == None:
-        vehicle = connect(connection_string, wait_ready=waitready, baud=baudrate)
+        vehicle = connect(connection_string, wait_ready=waitready, baud=baudrate, timeout=180)
     print("drone connected")
 
 def disconnect_drone():
