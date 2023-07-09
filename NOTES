@@ -1,0 +1,16 @@
+Wifi AP
+
+SSID : AMD_AIDRONE_AP
+PASS : 1234567890
+
+Jetson NANO Wifi IP : 192.168.4.2 (fixed)
+
+Computer Wifi IP : 192.168.4.3 (fixed)
+
+Both connected to AMD_AIDRONE_AP SSID 
+
+Run start-proxy.sh on Jetson Nano
+Run Simulator on Computer start-sitl.sh
+Connect GCS from computer to 192.168.4.2:14551
+
+Run start-drone.sh on Jetson Nano
