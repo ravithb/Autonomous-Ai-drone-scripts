@@ -1,5 +1,5 @@
-import jetson.inference
-import jetson.utils
+import jetson_inference
+import jetson_utils
 import cv2
 import numpy as np
 
@@ -8,9 +8,8 @@ camera = None
 
 def initialize_detector():
 	global net, camera
-	net = jetson.inference.detectNet("ssd-mobilenet-v2")
-	camera = jetson.utils.videoSource("csi://0")      # '/dev/video0' for V4L2
-	print("fakka")
+	net = jetson_inference.detectNet("ssd-mobilenet-v2")
+	camera = jetson_utils.videoSource("csi://0")      # '/dev/video0' for V4L2
 
 def get_image_size():
 	return camera.GetWidth(), camera.GetHeight()
