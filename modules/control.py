@@ -121,6 +121,7 @@ def control_drone():
         movementRollAngle = (pidRoll(inputValueVelocityX) * -1)
         drone.send_movement_command_XYA(movementRollAngle, 0,flight_altitude)
         debug_writer_ROLL(movementRollAngle)
+    print("Command sent. ")
 
 def stop_drone():
     drone.send_movement_command_YAW(0)

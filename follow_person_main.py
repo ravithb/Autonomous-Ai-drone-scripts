@@ -62,47 +62,50 @@ def track():
             print("Closing due to manual interruption")
             land() # Closes the loop and program
 
-        detections, fps, image = detector.get_detections()
+        try:
+            detections, fps, image = detector.get_detections()
 
-        if len(detections) > 0:
-            person_to_track = detections[0] # only track 1 person
-            
-            print(person_to_track)
-
-            person_center = person_to_track.Center # get center of person to track
-
-            x_delta = vision.get_single_axis_delta(image_center[0],person_center[0]) # get x delta 
-            y_delta = vision.get_single_axis_delta(image_center[1],person_center[1]) # get y delta
-
-            lidar_on_target = vision.point_in_rectangle(image_center,person_to_track.Left, person_to_track.Right, person_to_track.Top, person_to_track.Bottom) #check if lidar is pointed on target
-
-            lidar_dist = lidar.read_lidar_distance()[0] # get lidar distance in meter
-            
-            MA_Z.append(lidar_dist)
-            MA_X.append(x_delta)
-
-            #depth x command > PID and moving average
-            velocity_z_command = 0
-            if lidar_dist > 0 and lidar_on_target and len(MA_Z) > 0: #only if a valid lidar value is given change the forward velocity. Otherwise keep previos velocity (done by arducopter itself)
+            if len(detections) > 0:
+                person_to_track = detections[0] # only track 1 person
                 
-                z_delta_MA = calculate_ma(MA_Z) 
-                z_delta_MA = z_delta_MA - MAX_FOLLOW_DIST
-                control.setZDelta(z_delta_MA)
-                velocity_z_command = control.getMovementVelocityXCommand()
+                print(person_to_track)
 
-            #yaw command > PID and moving average
-            yaw_command = 0
-            if len(MA_X) > 0:
-                x_delta_MA = calculate_ma(MA_X)
-                control.setXdelta(x_delta_MA)
-                yaw_command = control.getMovementYawAngle()
+                person_center = person_to_track.Center # get center of person to track
 
-            control.control_drone()
-            #draw lidar distance
-            prepare_visualisation(lidar_dist, person_center, person_to_track, image, yaw_command, x_delta, y_delta, fps,velocity_z_command, lidar_on_target)
-        else:
-            return "search"
+                x_delta = vision.get_single_axis_delta(image_center[0],person_center[0]) # get x delta 
+                y_delta = vision.get_single_axis_delta(image_center[1],person_center[1]) # get y delta
 
+                lidar_on_target = vision.point_in_rectangle(image_center,person_to_track.Left, person_to_track.Right, person_to_track.Top, person_to_track.Bottom) #check if lidar is pointed on target
+
+                lidar_dist = lidar.read_lidar_distance()[0] # get lidar distance in meter
+                print("Lidar : " + str(lidar_dist))
+                
+                MA_Z.append(lidar_dist)
+                MA_X.append(x_delta)
+
+                #depth x command > PID and moving average
+                velocity_z_command = 0
+                if lidar_dist > 0 and lidar_on_target and len(MA_Z) > 0: #only if a valid lidar value is given change the forward velocity. Otherwise keep previos velocity (done by arducopter itself)
+                    
+                    z_delta_MA = calculate_ma(MA_Z) 
+                    z_delta_MA = z_delta_MA - MAX_FOLLOW_DIST
+                    control.setZDelta(z_delta_MA)
+                    velocity_z_command = control.getMovementVelocityXCommand()
+
+                #yaw command > PID and moving average
+                yaw_command = 0
+                if len(MA_X) > 0:
+                    x_delta_MA = calculate_ma(MA_X)
+                    control.setXdelta(x_delta_MA)
+                    yaw_command = control.getMovementYawAngle()
+
+                control.control_drone()
+                #draw lidar distance
+                prepare_visualisation(lidar_dist, person_center, person_to_track, image, yaw_command, x_delta, y_delta, fps,velocity_z_command, lidar_on_target)
+            else:
+                return "search"
+        except Exception as ex:
+            print(str(ex))
 def search():
     print("State is SEARCH -> " + STATE)
     start = time.time()
