@@ -5,6 +5,7 @@ sys.path.insert(1, 'modules')
 import cv2
 import collections
 
+import ready_signal as rs
 import lidar
 import detector_mobilenet as detector
 import vision
@@ -29,6 +30,10 @@ STATE = "takeoff"                               # takeoff land track search
 # end config
 
 def setup():
+    print("initializing hardware enable input")
+    rs.initialize()
+    rs.waitForHarwareEnabe()
+
     print("connecting lidar")
     lidar.connect_lidar("/dev/ttyTHS1")
 
@@ -126,6 +131,9 @@ def search():
 
     return "land"
 
+def stop():
+    control.stop_drone()
+
 def takeoff():
     control.print_drone_report()
     print("State = TAKEOFF -> " + STATE)
@@ -136,6 +144,7 @@ def land():
     print("State = LAND -> " + STATE)
     control.land()
     detector.close_camera()
+    rs.close()
     sys.exit(0)
 
 def visualize(img):
@@ -183,6 +192,10 @@ while True:
     # main program loop
     """" True or False values depend whether or not
         a PID controller or a P controller will be used  """
+    if rs.isHardwareEnabled() == False:
+        stop()
+        time.sleep(1)
+        continue
 
     if STATE == "track":
         control.set_system_state("track")
