@@ -188,6 +188,7 @@ def send_movement_command_YAW(heading):
 
     # send command to vehicle
     vehicle.send_mavlink(msg)
+    vehicle.flush()
     #Vehicle.commands.flush()
 
 def send_movement_command_XYA(velocity_x, velocity_y, altitude):
@@ -210,5 +211,6 @@ def send_movement_command_XYA(velocity_x, velocity_y, altitude):
         0, 0)    
 
     vehicle.send_mavlink(msg)
+    vehicle.flush()
     #Vehicle.commands.flush()
 

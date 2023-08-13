@@ -122,6 +122,7 @@ def search():
             land() # Closes the loop and program
 
         detections, fps, image = detector.get_detections()
+        image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
         print("searching: " + str(len(detections)))
         if len(detections) > 0:
             return "track"
