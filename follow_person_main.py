@@ -123,7 +123,7 @@ def search():
             land() # Closes the loop and program
 
         detections, fps, image = detector.get_detections()
-        image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
+        # image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
         print("searching: " + str(len(detections)))
         if len(detections) > 0:
             return "track"
@@ -153,7 +153,7 @@ def visualize(img):
     if "flight" == args.mode:
         debug_image_writer.write(img)
     else:
-        cv2.imshow("out", img)
+        cv2.imshow("out", cv2.cvtColor(img,cv2.COLOR_BGR2RGB))
         cv2.waitKey(1)
     return
 
