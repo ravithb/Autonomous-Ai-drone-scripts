@@ -9,7 +9,7 @@ USE_PID_ROLL = False
 MAX_SPEED = 4       # M / s
 MAX_YAW = 15        # Degrees / s 
 
-P_YAW = 0.02 #orgineel 0.01
+P_YAW = 0.05 #orgineel 0.01
 I_YAW = 0
 D_YAW = 0
 

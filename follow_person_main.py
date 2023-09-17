@@ -21,7 +21,7 @@ args = parser.parse_args()
 
 # config
 MAX_FOLLOW_DIST = 2                          #meter
-MAX_ALT =  2.5                                  #m
+MAX_ALT =  2                                  #m
 MAX_MA_X_LEN = 5
 MAX_MA_Z_LEN = 5
 MA_X = collections.deque(maxlen=MAX_MA_X_LEN)   #Moving Average X
@@ -85,13 +85,14 @@ def track():
                 lidar_dist = lidar.read_lidar_distance()[0] # get lidar distance in meter
                 print("Lidar : " + str(lidar_dist))
                 
-                MA_Z.append(lidar_dist)
+                MA_Z.append(y_delta)
                 MA_X.append(x_delta)
 
                 #depth x command > PID and moving average
                 velocity_z_command = 0
-                if lidar_dist > 0 and lidar_on_target and len(MA_Z) > 0: #only if a valid lidar value is given change the forward velocity. Otherwise keep previos velocity (done by arducopter itself)
-                    
+                # if lidar_dist > 0 and lidar_on_target and len(MA_Z) > 0: #only if a valid lidar value is given change the forward velocity. Otherwise keep previos velocity (done by arducopter itself)
+
+                if lidar_dist > 4 and len(MA_Z) > 0: #only if a valid lidar value is given change the forward velocity. Otherwise keep previos velocity (done by arducopter itself)                    
                     z_delta_MA = calculate_ma(MA_Z) 
                     z_delta_MA = z_delta_MA - MAX_FOLLOW_DIST
                     control.setZDelta(z_delta_MA)
