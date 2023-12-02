@@ -54,7 +54,7 @@ setup()
 
 image_width, image_height = detector.get_image_size()
 image_center = (image_width / 2, image_height / 2)
-debug_image_writer = cv2.VideoWriter(args.debug_path + ".avi",cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 25.0,(image_width,image_height))
+debug_image_writer = cv2.VideoWriter(args.debug_path + ".avi",cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 25.0,(image_width,image_height),True)
 
 control.configure_PID(args.control)
 control.initialize_debug_logs(args.debug_path)
@@ -107,7 +107,7 @@ def track():
 
                 control.control_drone()
                 #draw lidar distance
-                prepare_visualisation(lidar_dist, person_center, person_to_track, image, yaw_command, x_delta, y_delta, fps,velocity_z_command, lidar_on_target)
+                prepare_visualisation(lidar_dist, person_center, person_to_track, image, yaw_command, x_delta, y_delta, fps,velocity_z_command, lidar_on_target, z_delta_MA, x_delta_MA)
             else:
                 return "search"
         except Exception as ex:
@@ -153,11 +153,11 @@ def visualize(img):
     if "flight" == args.mode:
         debug_image_writer.write(img)
     else:
-        cv2.imshow("out", cv2.cvtColor(img,cv2.COLOR_BGR2RGB))
+        cv2.imshow("out", img)
         cv2.waitKey(1)
     return
 
-def prepare_visualisation(lidar_distance, person_center, person_to_track, image, yaw_command, x_delta, y_delta, fps,velocity_x_command, lidar_on_target):
+def prepare_visualisation(lidar_distance, person_center, person_to_track, image, yaw_command, x_delta, y_delta, fps,velocity_x_command, lidar_on_target, z_delta_ma, x_delta_ma):
     lidar_vis_x = image_width - 50
     lidar_vis_y = image_height - 50
     lidar_vis_y2 = int(image_height - lidar_distance * 200)
@@ -180,6 +180,7 @@ def prepare_visualisation(lidar_distance, person_center, person_to_track, image,
     cv2.putText(image, "fps: " + str(round(fps,2)) + " yaw: " + str(round(yaw_command,2)) + " forward: " + str(round(velocity_x_command,2)) , (50, 50), cv2.FONT_HERSHEY_SIMPLEX , 1, (0, 0, 255), 3, cv2.LINE_AA) 
     cv2.putText(image, "lidar_on_target: " + str(lidar_on_target), (50, 100), cv2.FONT_HERSHEY_SIMPLEX , 1, (0, 0, 255), 3, cv2.LINE_AA) 
     cv2.putText(image, "x_delta: " + str(round(x_delta,2)) + " y_delta: " + str(round(y_delta,2)), (50, 150), cv2.FONT_HERSHEY_SIMPLEX , 1, (0, 0, 255), 3, cv2.LINE_AA) 
+    cv2.putText(image, "z delta ma: " + str(round(z_delta_ma,2)) + " x delta ma: " + str(round(x_delta_ma,2)), (50, 200), cv2.FONT_HERSHEY_SIMPLEX , 1, (0, 0, 255), 3, cv2.LINE_AA) 
 
     visualize(image)
 

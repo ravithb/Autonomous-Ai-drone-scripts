@@ -6,7 +6,7 @@ import time
 USE_PID_YAW = True
 USE_PID_ROLL = False
 
-MAX_SPEED = 4       # M / s
+MAX_SPEED = 1       # M / s
 MAX_YAW = 15        # Degrees / s 
 
 P_YAW = 0.05 #orgineel 0.01
@@ -104,23 +104,23 @@ def debug_writer_YAW(value):
 
 def debug_writer_ROLL(value):
     global debug_velocity
-    debug_velocity.write(str(P_ROLL) + "," + str(I_ROLL) + "," + str(D_ROLL) + "," + str(inputValueYaw) + "," + str(value) + "\n")
+    debug_velocity.write(str(P_ROLL) + "," + str(I_ROLL) + "," + str(D_ROLL) + "," + str(inputValueVelocityX) + "," + str(value) + "\n")
 
 def control_drone():
     global movementYawAngle, movementRollAngle
-    if inputValueVelocityX == 0:
-        drone.send_movement_command_XYA(0, 0,flight_altitude)
-    else:
-        movementRollAngle = (pidRoll(inputValueVelocityX) * -1)
-        drone.send_movement_command_XYA(movementRollAngle, 0,flight_altitude)
-        debug_writer_ROLL(movementRollAngle)
+    # if inputValueVelocityX == 0:
+    #     drone.send_movement_command_XYA(0, 0,flight_altitude)
+    # else:
+    movementRollAngle = (pidRoll(inputValueVelocityX) * -1)
+    drone.send_movement_command_XYA(movementRollAngle, 0,flight_altitude)
+    debug_writer_ROLL(movementRollAngle)
 
-    if inputValueYaw == 0:
-        drone.send_movement_command_YAW(0)
-    else:
-        movementYawAngle = (pidYaw(inputValueYaw) * -1)
-        drone.send_movement_command_YAW(movementYawAngle)
-        debug_writer_YAW(movementYawAngle)
+    # if inputValueYaw == 0:
+    #     drone.send_movement_command_YAW(0)
+    # else:
+    movementYawAngle = (pidYaw(inputValueYaw) * -1)
+    drone.send_movement_command_YAW(movementYawAngle)
+    debug_writer_YAW(movementYawAngle)
     print("Command sent. ")
 
 def stop_drone():

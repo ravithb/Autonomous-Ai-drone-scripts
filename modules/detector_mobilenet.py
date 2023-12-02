@@ -21,6 +21,7 @@ def close_camera():
 def get_detections():
 	person_detections = []
 	img = camera.Capture()
+	#img = cv2.cvtColor(jetson_utils.cudaToNumpy(camera.Capture()),cv2.COLOR_RGB2BGR)
 	detections = net.Detect(img)
 	for detection in detections:
 		if detection.ClassID == 1: #remove unwanted classes
