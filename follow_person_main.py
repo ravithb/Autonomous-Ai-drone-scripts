@@ -32,7 +32,8 @@ STATE = "takeoff"                               # takeoff land track search
 def setup():
     print("initializing hardware enable input")
     rs.initialize()
-    rs.waitForHarwareEnabe()
+    if args.mode == "flight":
+        rs.waitForHarwareEnabe()
 
     print("connecting lidar")
     lidar.connect_lidar("/dev/ttyTHS1")
@@ -150,9 +151,8 @@ def land():
     sys.exit(0)
 
 def visualize(img):
-    if "flight" == args.mode:
-        debug_image_writer.write(img)
-    else:
+    debug_image_writer.write(img)
+    if "test" == args.mode:
         cv2.imshow("out", img)
         cv2.waitKey(1)
     return
@@ -195,7 +195,7 @@ while True:
     # main program loop
     """" True or False values depend whether or not
         a PID controller or a P controller will be used  """
-    if rs.isHardwareEnabled() == False:
+    if args.mode == 'flight' and rs.isHardwareEnabled() == False:
         stop()
         time.sleep(1)
         continue

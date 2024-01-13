@@ -21,12 +21,17 @@ def close_camera():
 def get_detections():
 	person_detections = []
 	img = camera.Capture()
-	#img = cv2.cvtColor(jetson_utils.cudaToNumpy(camera.Capture()),cv2.COLOR_RGB2BGR)
-	detections = net.Detect(img)
-	for detection in detections:
-		if detection.ClassID == 1: #remove unwanted classes
-			person_detections.append(detection)
+	jetson_utils.cudaDeviceSynchronize()
+	img2 = cv2.cvtColor(jetson_utils.cudaToNumpy(camera.Capture()),cv2.COLOR_RGB2BGR)
+	try:
+		detections = net.Detect(img)
+		for detection in detections:
+			if detection.ClassID == 1: #remove unwanted classes
+				person_detections.append(detection)
+	except Exception as e:
+		print("Exception ", e)
 	fps = net.GetNetworkFPS()
 
-	return person_detections, fps, jetson_utils.cudaToNumpy(img)
+	return person_detections, fps, img2
+#jetson_utils.cudaToNumpy(img)
 
